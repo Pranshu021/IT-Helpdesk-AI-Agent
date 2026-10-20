@@ -1,10 +1,5 @@
 from langchain_core.tools import tool
 
-@tool
-def calculator(expression: str):
-    """ Calculator tool to evaluate and mathematical expression """
-    return eval(expression)
-
 
 @tool
 def search_knowledge_base(query: str) -> str:
@@ -25,13 +20,13 @@ def search_knowledge_base(query: str) -> str:
         ),
     }
 
-    query = query.lower()
+    query = query.strip().lower()
 
     for keyword, answer in knowledge_base.items():
         if keyword in query:
             return answer
 
-    return "I couldn't find troubleshooting information for that issue."
+    return "not_found"
 
 
 @tool
@@ -75,5 +70,4 @@ tools = [
     search_knowledge_base,
     get_ticket_status,
     create_ticket,
-    calculator
 ]
