@@ -1,8 +1,10 @@
+from langgraph.errors import GraphRecursionError
+
 from graph import graph
 
 
 def main():
-    print("AI IT Helpdesk Agent - Multi-step Workflow")
+    print("AI IT Helpdesk Agent - Agentic Loop")
     print("--------------------")
     print("Type 'exit' or 'quit' to quit\n")
 
@@ -16,23 +18,30 @@ def main():
         if not user_input:
             continue
         
-        result = graph.invoke(
-            {
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": user_input,
-                    }
-                ],
-                "category": "",
-                "tool_result": "",
-                "response": ""
-            }
-        )
+        try:
+            result = graph.invoke(
+                {
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": user_input,
+                        }
+                    ],
+                    "observations": [],
+                    "completed_steps": [],
+                    "next_action": "",
+                    "iterations": 0,
+                    "response": "",
+                },
+                config={"recursion_limit": 10},
+            )
 
-        print(f"\nCategory: {result['category']}")
-        print(f"Workflow result: {result['tool_result']}\n")
-        print(f"Agent: {result['response']}\n")
+            print(f"\nAgent: {result['response']}\n")
+        except GraphRecursionError:
+            print(
+                "\nAgent: I could not complete the request within "
+                "the allowed number of steps.\n"
+            )
 
 
 if __name__ == "__main__":

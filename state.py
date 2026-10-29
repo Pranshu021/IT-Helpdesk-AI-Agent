@@ -6,6 +6,8 @@ from langgraph.graph.message import add_messages
 
 class AgentState(TypedDict):
     messages: Annotated[list, add_messages]
-    category: str
-    tool_result: str
+    observations: list[str]
+    completed_steps: list[str]
+    next_action: str
+    iterations: int
     response: str

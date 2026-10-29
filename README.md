@@ -1,101 +1,70 @@
-# LangGraph Helpdesk Agent — Video 1
+# LangGraph Helpdesk Agent - Video 4
 
-A deliberately small AI IT Helpdesk Agent for learning the basics of LangGraph.
+A deliberately small AI IT Helpdesk Agent for learning LangGraph agentic loops.
 
 ## Concepts covered
 
 - State
-- Nodes
-- Edges
-- Conditional edges
+- Nodes and conditional edges
 - START / END
-- Tool calling
-- ToolNode
-- Agent → Tools → Agent loop
-
-## Project structure
-
-```text
-langgraph-helpdesk/
-├── main.py
-├── graph.py
-├── tools.py
-├── state.py
-├── requirements.txt
-├── .env.example
-└── README.md
-```
+- Local helpdesk tools
+- An explicit agentic loop: decide -> execute -> observe -> decide
+- Structured model output for choosing the next action
+- Recursion limits for loop safety
 
 ## Setup
 
-### 1. Create a virtual environment
-
-Windows:
-
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
-```
-
-macOS / Linux:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
-
-### 2. Install dependencies
-
-```bash
+.venv\\Scripts\\activate
 pip install -r requirements.txt
 ```
 
-### 3. Configure the API key
-
-Copy `.env.example` to `.env`:
+Copy `.env.example` to `.env` and set:
 
 ```text
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-Then replace the placeholder with your OpenAI API key.
-
-### 4. Run
+Run the demo:
 
 ```bash
 python main.py
 ```
 
+## Video 4: Agentic Loop
+
+The controller repeatedly chooses the next useful helpdesk action based on
+the user's goal, completed steps, and observations gathered so far:
+
+```text
+START -> decide -> execute -> decide -> execute -> respond -> END
+                       ^          |
+                       |__________|
+```
+
+The loop can use the local knowledge base, check a demo ticket, estimate a
+ticket priority, or create a demo ticket. The model chooses when to continue
+and when enough information has been gathered to finish.
+
+This is intentionally separate from the ReAct tool-call loop introduced in
+the previous video. Here, the graph state explicitly tracks progress and the
+controller selects the next workflow action.
+
 ## Try these prompts
 
 ```text
-My VPN isn't connecting.
+My VPN is not connecting. Look up troubleshooting advice and estimate the ticket priority.
 ```
 
 ```text
-What's the status of INC-1001?
+Check INC-1001 and tell me whether it needs escalation.
 ```
 
 ```text
-Create a ticket because my Wi-Fi keeps disconnecting.
+Create a ticket because my Wi-Fi keeps disconnecting and estimate its priority.
 ```
 
-```text
-What can you help me with?
-```
-
-## Graph
-
-```text
-                         ┌───────────────┐
-                         │               │
-                         ▼               │
-START → AGENT → Conditional Edge → TOOLS
-          │                         │
-          │                         │
-          └────────────→ END        │
-                                    │
-                                    └──→ AGENT
-```
-
-The project intentionally uses hardcoded knowledge-base and ticket data. Later videos can progressively replace these pieces with databases, RAG, memory, human-in-the-loop, MCP, and other advanced LangGraph features.
+All ticket data and troubleshooting information are local demo data. Ticket
+creation does not change a real support system, and priority estimation is a
+simple keyword-based demo policy rather than a production SLA calculation.
